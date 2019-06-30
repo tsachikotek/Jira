@@ -5,11 +5,9 @@ VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraAdapter", "JiraAdapter\JiraAdapter.csproj", "{3BEE73B7-19C6-4BE4-A21B-B0DEAA0F48DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordHelper", "..\JiraHelper\WordHelper\WordHelper.csproj", "{4F3CA01A-222D-4648-BBE1-89E8B929C87B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordHelper", "WordHelper\WordHelper.csproj", "{4F3CA01A-222D-4648-BBE1-89E8B929C87B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraHelper", "..\JiraHelper\JiraHelper\JiraHelper.csproj", "{7B0B64B0-B7E8-40A0-8141-6EEC26447041}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "..\Logger\Logger.csproj", "{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraHelper", "JiraHelper\JiraHelper.csproj", "{7B0B64B0-B7E8-40A0-8141-6EEC26447041}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{7B0B64B0-B7E8-40A0-8141-6EEC26447041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B0B64B0-B7E8-40A0-8141-6EEC26447041}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B0B64B0-B7E8-40A0-8141-6EEC26447041}.Release|Any CPU.Build.0 = Release|Any CPU
-		{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -95,17 +95,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\JiraHelper\JiraHelper\JiraHelper.csproj">
+    <ProjectReference Include="..\JiraHelper\JiraHelper.csproj">
       <Project>{7b0b64b0-b7e8-40a0-8141-6eec26447041}</Project>
       <Name>JiraHelper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\JiraHelper\WordHelper\WordHelper.csproj">
+    <ProjectReference Include="..\WordHelper\WordHelper.csproj">
       <Project>{4f3ca01a-222d-4648-bbe1-89e8b929c87b}</Project>
       <Name>WordHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logger\Logger.csproj">
-      <Project>{855C52FD-DE4A-41AD-96F7-73B6D73B7CD6}</Project>
-      <Name>Logger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
