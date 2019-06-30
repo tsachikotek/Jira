@@ -1,0 +1,31 @@
+﻿<Window x:Class="JiraAdapter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JiraAdapter"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="618" Width="800">
+    <Grid  Margin="20">
+        <StackPanel Margin="20">
+            
+            <TextBlock>JIRA URL</TextBlock>
+            <TextBox Name="jiraUrl" Background="Blue" Height="50" FontSize="40"></TextBox>
+
+            <TextBlock>JIRA USERNAME</TextBlock>
+            <TextBox Name="jiraUser"  Background="Blue" Height="50" FontSize="40"></TextBox>
+
+            <TextBlock>JIRA PASSWORD</TextBlock>
+            <PasswordBox Name="jiraPass"  Background="Blue" Height="50" FontSize="40" PasswordChar="*" Password=""></PasswordBox>
+
+            <TextBlock>JIRA FILTER</TextBlock>
+            <TextBox Name="jiraFilter"  Background="Blue" Height="50" FontSize="40"></TextBox>
+
+            <Button Height="50" Margin="20" Click="Start">START</Button>
+            <ProgressBar Name="progressBar" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Height="25" Margin="20" />
+            <TextBlock Name="progressingIssue" Margin="20" Text="{Binding WorkingOn}"></TextBlock>
+
+            <Button Name="btnOpenFile" Click="Button_Click">OPEN FILE</Button>
+        </StackPanel>
+    </Grid>
+</Window>
