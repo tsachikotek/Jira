@@ -14,13 +14,16 @@ namespace WordHelper
     {
         static void Main(string[] args)
         {
-            string jiraUrl = "https://jira.allot.com";
-            string jiraUsername = "tkotek@allot.com";
-            string jiraPassword = "www222@@@";
-            string jiraQueryFolter = "kotek";
+            string jiraUrl = "https://jira.aligntech.com";
+            string jiraUsername = args[0];
+            string jiraPassword = args[1];
+            string jiraQueryFilter = args[2];
+
+            Console.WriteLine("{0} {1} {2} {3}", jiraUrl, jiraUsername, jiraPassword, jiraQueryFilter);
+            Console.WriteLine("ForTest: {0}/rest/api/2/search?jql=filter={1}", jiraUrl, jiraQueryFilter);
 
             JiraObject jira = new JiraObject(jiraUrl, jiraUsername, jiraPassword);
-            JiraIssues issues = jira.getJiraIssues(jiraQueryFolter);
+            JiraIssues issues = jira.getJiraIssues(jiraQueryFilter);
 
             WordHelper.wordCreate word = new wordCreate();
             word.create(issues);
@@ -29,5 +32,5 @@ namespace WordHelper
         }
 
         
-    }
+    }   
 }

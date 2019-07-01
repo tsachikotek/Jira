@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using JiraHelper;
 using WordHelper;
 using System.ComponentModel;
+using System.Windows.Threading;
 
 namespace JiraAdapter
 {
@@ -52,7 +53,10 @@ namespace JiraAdapter
             {
                 _workingOn = value;
                 if (PropertyChanged != null)
+                {
+                    log("WorkingOn: " + _workingOn);
                     PropertyChanged(this, new PropertyChangedEventArgs("WorkingOn"));
+                }
             }
 
         }
@@ -80,28 +84,53 @@ namespace JiraAdapter
         private void ExportJiraIssue(JiraIssues issues, string filename)
         {
             wordCreate wordDoc = new wordCreate();
+            Action<string> workMethod = (message) => log(message);
 
-            int index = 0;
-
-            wordDoc.Open();
-
-            foreach (var jiraIssue in issues.issues)
+            try
             {
+                int index = 1;
+                log("OPENING...");
+                wordDoc.Open(filename);
+                log(filename + " IS OPEN");
+                WorkingOn = "NUMBER OF ISSUES: " + issues.issues.Count.ToString();
 
-                //progressBar.Value = index;
-                WorkingOn = "[" + index.ToString() + "/" + issues.issues.Count.ToString() + "] " + jiraIssue.key + " - " + jiraIssue.fields.summary;
-                wordDoc.AddIssue(jiraIssue);
-                index++;
-                System.Threading.Thread.Sleep(100);
-                WorkerState = index;
-                //MessageBox.Show(index.ToString());
+                foreach (var jiraIssue in issues.issues)
+                {                    
+                    log("[" + index.ToString() + "/" + issues.issues.Count.ToString() + "] " + jiraIssue.key + " - " + jiraIssue.fields.summary);
+
+                    wordDoc.AddIssue(jiraIssue);
+                    index++;
+                    WorkingOn = "[" + index.ToString() + "/" + issues.issues.Count.ToString() + "] " + jiraIssue.key + " - " + jiraIssue.fields.summary;
+                    System.Threading.Thread.Sleep(100);
+                    WorkerState = index;
+                    //MessageBox.Show(index.ToString());                    
+                }
+
+                WorkingOn = "SAVING...";
+                wordDoc.Save(filename);
+                WorkingOn = "SAVED!";
             }
+            catch (Exception exc)
+            {   
+                log(exc.Message);
+                WorkingOn = exc.Message;
+            }
+        }
+
+        private void log (string message)
+        {
+            logger.Dispatcher.BeginInvoke((Action)delegate () {
+                int itemIndex = logger.Items.Add(message);
+                logger.SelectedIndex = itemIndex;
+                logger.ScrollIntoView(logger.SelectedItem);
+            });
             
-            wordDoc.Save(filename);            
         }
 
         private void Start(object sender, RoutedEventArgs e)
         {
+            log("STARTING...");
+
             string jiraHome = ((TextBox)jiraUrl).Text;  //"https://jira.allot.com";
             string jiraUsername = ((TextBox)jiraUser).Text;  
             string jiraPassword = ((PasswordBox)jiraPass).Password.ToString();  
@@ -109,30 +138,70 @@ namespace JiraAdapter
 
             btnOpenFile.IsEnabled = false;
 
-            JiraObject jira = new JiraObject(jiraHome, jiraUsername, jiraPassword);
-
+            WorkingOn = "CONNECTING TO JIRA...";
+            JiraObject jira = new JiraObject(jiraHome, jiraUsername, jiraPassword);            
             JiraIssues issues = jira.getJiraIssues(jiraQueryFolter);
-            
+            WorkingOn = "RETRIEVED: " + issues.issues.Count + " issues";
+
             int max = issues.issues.Count;
             progressBar.Maximum = max;
             
 
             DataContext = this;
+
+            _bgWorker = new BackgroundWorker(); //stopped the dowork being executed multiple times when button pressed again in the same session
+            _bgWorker.WorkerReportsProgress = true;
+            _bgWorker.WorkerSupportsCancellation = true;
             _bgWorker.DoWork += (s, x) =>
             {
+
+                log("STARTING...");
+
                 WorkingOn = "STARTING...";
                 ExportJiraIssue(issues, file);
+
+                log("DONE!!!");
                 WorkingOn = "DONE!!!";
-                MessageBox.Show("Done!!!\r\nFile: " + file);
+                //MessageBox.Show("Done!!!\r\nFile: " + file);
+                WorkingOn = "COMPLETED!!!";
             };
 
-            btnOpenFile.IsEnabled = true;
+            _bgWorker.ProgressChanged += worker_ProgressChanged;
+            _bgWorker.RunWorkerCompleted += worker_RunWorkerCompleted;
             _bgWorker.RunWorkerAsync();
+
+            //_bgWorker.DoWork += (s, x) =>
+            //{
+            //    WorkingOn = "STARTING..." + WorkerState.ToString();
+            //    ExportJiraIssue(issues, file);
+            //    WorkingOn = "DONE!!!" + WorkerState.ToString();
+            //    MessageBox.Show("Done!!!\r\nFile: " + file);
+            //    WorkingOn = "COMPLETED!!!" + WorkerState.ToString();
+
+            //};
+
+            
+            //_bgWorker.RunWorkerAsync();
+            
+        }
+        
+        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            logger.Items.Add(e.ProgressPercentage);
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            btnOpenFile.IsEnabled = true;
+            _bgWorker.Dispose();
+            logger.Items.Add("COMPLETED");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            WorkingOn = "OPENNING...";
+            logger.Items.Add("OPENNING: " +file);
             System.Diagnostics.Process.Start(file);
-        }
+        }        
     }
 }

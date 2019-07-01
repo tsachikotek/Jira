@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Word = Microsoft.Office.Interop.Word;
 using JiraHelper;
 using System.Reflection;
+using System.IO;
 
 namespace WordHelper
 {
@@ -16,7 +17,7 @@ namespace WordHelper
         public object oMissing = System.Reflection.Missing.Value;
         public object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
-        public void Open()
+        public void New()
         {
             //Start Word and create a new document.
 
@@ -30,6 +31,21 @@ namespace WordHelper
             insertNewParagraph(oDoc, "TABLE OF CONTENT", "TOC");
             insertTOC(oWord, oDoc);
             oDoc.Words.Last.InsertBreak(Word.WdBreakType.wdPageBreak);
+        }
+
+        public void Open(string template)
+        {
+            //Start Word and create a new document.
+
+            if (File.Exists(template))
+            {                
+                oWord = new Word.Application();
+                oWord.Visible = false;
+                oDoc = oWord.Documents.Open(template, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
+            }
+            else {
+                New();
+            }
         }
 
         public void Save(string filename)
@@ -58,7 +74,7 @@ namespace WordHelper
         public void create(JiraIssues jiraIssues)
         {
 
-            Open();            
+            New();            
 
             //insertNewParagraph(oDoc, "Jira Issues:", "Content");
             int x = 0;

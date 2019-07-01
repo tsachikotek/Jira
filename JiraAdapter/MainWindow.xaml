@@ -5,27 +5,59 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JiraAdapter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="618" Width="800">
+        Title="MainWindow" Height="818.496" Width="800">
     <Grid  Margin="20">
         <StackPanel Margin="20">
             
             <TextBlock>JIRA URL</TextBlock>
             <TextBox Name="jiraUrl" Background="Blue" Height="50" FontSize="40"></TextBox>
 
-            <TextBlock>JIRA USERNAME</TextBlock>
+            <TextBlock Margin="0 20 0 0">JIRA USERNAME</TextBlock>
             <TextBox Name="jiraUser"  Background="Blue" Height="50" FontSize="40"></TextBox>
 
-            <TextBlock>JIRA PASSWORD</TextBlock>
+            <TextBlock Margin="0 20 0 0">JIRA PASSWORD</TextBlock>
             <PasswordBox Name="jiraPass"  Background="Blue" Height="50" FontSize="40" PasswordChar="*" Password=""></PasswordBox>
 
-            <TextBlock>JIRA FILTER</TextBlock>
+            <TextBlock Margin="0 20 0 0">JIRA FILTER</TextBlock>
             <TextBox Name="jiraFilter"  Background="Blue" Height="50" FontSize="40"></TextBox>
 
             <Button Height="50" Margin="20" Click="Start">START</Button>
-            <ProgressBar Name="progressBar" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Height="25" Margin="20" />
-            <TextBlock Name="progressingIssue" Margin="20" Text="{Binding WorkingOn}"></TextBlock>
+            
+            <ProgressBar Name="progressBar" Minimum="0" Maximum="100" Value="{Binding WorkerState}" Height="30"  Foreground="#FF62FF7F" Margin ="20 0" />
+            
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 20">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Processing: {0}/{1}">
+                        <Binding Path="Value" ElementName="progressBar" />
+                        <Binding Path="Maximum" ElementName="progressBar" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
 
-            <Button Name="btnOpenFile" Click="Button_Click">OPEN FILE</Button>
+            <Button Name="btnOpenFile" Click="Button_Click" Margin="0 20 0 0" Width="100">OPEN FILE</Button>
+
+            <TextBlock Name="txtStatus" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0 0 0 0" Text="Logger:" />
+
+            <ListBox Name="logger" Height="100" Margin="0 0 0 20">
+                <ListBoxItem>LOG...</ListBoxItem>                
+            </ListBox>
+            
+            <DockPanel>
+
+                <StatusBar x:Name="TestStatusBar" DockPanel.Dock="Bottom">
+
+                    <StatusBarItem>
+
+                        <TextBlock x:Name="MessageTextBlock" Text="{Binding WorkingOn}"></TextBlock>
+
+                    </StatusBarItem>
+
+                    
+
+                </StatusBar>                
+
+            </DockPanel>
+
         </StackPanel>
     </Grid>
 </Window>

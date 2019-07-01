@@ -14,8 +14,14 @@ namespace JiraHelper
 
         public JiraObject(string jiraUrl, string jiraUsername, string jiraPassword)
         {
-            //jiraConn = Jira.CreateRestClient("https://jira.allot.com", "tkotek@allot.com", "www222@@@");
-            jiraConn = Jira.CreateRestClient(jiraUrl, jiraUsername, jiraPassword);
+            if (jiraUrl == "X")
+            {
+                jiraConn = Jira.CreateRestClient("https://jira.allot.com", "tkotek@allot.com", "www222@@@");
+            }
+            else
+            {
+                jiraConn = Jira.CreateRestClient(jiraUrl, jiraUsername, jiraPassword);
+            }
         }
 
         public JiraIssues getJiraIssues(string filter)
@@ -28,8 +34,8 @@ namespace JiraHelper
 
             RestRequest reqGetFilter = new RestRequest();
             //reqGetFilter.Resource = "https://jira.allot.com/rest/api/2/search?jql=filter=kotek";
-            reqGetFilter.Resource = "https://jira.allot.com/rest/api/2/search";
-
+            reqGetFilter.Resource = jiraConn.Url + "rest/api/2/search";
+            
             //reqGetFilter.Parameters.Add(new Parameter() { Name="jql", Value="filter=CI", Type=ParameterType.QueryString });
             reqGetFilter.Parameters.Add(new Parameter() { Name = "jql", Value = "filter=" + filter, Type = ParameterType.QueryString });
             reqGetFilter.Parameters.Add(new Parameter() { Name = "maxResults", Value = int.MaxValue, Type = ParameterType.QueryString });
