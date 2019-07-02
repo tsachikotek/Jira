@@ -12,14 +12,30 @@ namespace WordHelper
 {
     public class wordCreate
     {
+        public event printLogHandler OnLog;
+        public delegate void printLogHandler(string sender, string message);
+
         public Word._Application oWord;
         public Word._Document oDoc;
         public object oMissing = System.Reflection.Missing.Value;
         public object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
+        public void log(string message)
+        {
+            // Log to the queue.
+            //Log(log);
+            Console.WriteLine(message);
+
+            if (OnLog != null)
+            {
+                OnLog(this.GetType().Name , message);
+            }
+        }
+
         public void New()
         {
             //Start Word and create a new document.
+            log("Creating New Document");
 
             oWord = new Word.Application();
             oWord.Visible = false;
@@ -38,7 +54,8 @@ namespace WordHelper
             //Start Word and create a new document.
 
             if (File.Exists(template))
-            {                
+            {
+                log("Openning: " + template);
                 oWord = new Word.Application();
                 oWord.Visible = false;
                 oDoc = oWord.Documents.Open(template, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
@@ -50,6 +67,8 @@ namespace WordHelper
 
         public void Save(string filename)
         {
+            log("Saving: " + filename);
+
             oDoc.SaveAs(filename, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
             
             oDoc.SaveAs2(@"C:\Temp\TestDocumentWith1Paragraph.docx");
@@ -60,14 +79,15 @@ namespace WordHelper
         }
 
         public void AddIssue(Issue jiraIssue)
-        {           
+        {
+            log("Adding Jira Issue: " + jiraIssue.key);
             addJiraIssue(oDoc, jiraIssue);
 
             //insertChart(oWord, oDoc);
             //addTable(oWord, oDoc);
             //insertText(oDoc, "END DOCUMENT!!!");
 
-
+            log("Updating TOC...");
             updateTOC(oWord, oDoc);
         }
 
@@ -95,8 +115,10 @@ namespace WordHelper
             //this.Close();
         }
 
-        private static void insertNewParagraph(Word._Document oDoc, string title, string bookmark)
+        private void insertNewParagraph(Word._Document oDoc, string title, string bookmark)
         {
+            log("Inserting New Paragraph: " + title + " bookmark: " + bookmark);
+
             object oMissing = System.Reflection.Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -111,8 +133,10 @@ namespace WordHelper
             oPara.Range.InsertParagraphAfter();
         }
 
-        private static void insertText(Word._Document oDoc, string text)
+        private void insertText(Word._Document oDoc, string text)
         {
+            log("Inserting Text: " + text);
+
             object oMissing = System.Reflection.Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -126,8 +150,10 @@ namespace WordHelper
 
         }
 
-        private static void insertChart(Word._Application oWord, Word._Document oDoc)
+        private void insertChart(Word._Application oWord, Word._Document oDoc)
         {
+            log("Inserting Chart...");
+
             object oMissing = System.Reflection.Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -170,8 +196,10 @@ namespace WordHelper
 
         }
 
-        private static void addTable(Word._Application oWord, Word._Document oDoc)
+        private void addTable(Word._Application oWord, Word._Document oDoc)
         {
+            log("Inserting Table...");
+
             object oMissing = System.Reflection.Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -238,8 +266,9 @@ namespace WordHelper
             wrdRng.InsertParagraphAfter();
         }
 
-        private static void addJiraIssue(Word._Document oDoc, Issue issue)
+        private void addJiraIssue(Word._Document oDoc, Issue issue)
         {
+            log("Inserting Jira Issue: " + issue.key);
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             Word.Paragraph oPara2;
@@ -274,8 +303,10 @@ namespace WordHelper
             //oPara3.Range.InsertParagraphAfter();
         }
 
-        private static void insertTOC(Word._Application oWord, Word._Document oDoc)
+        private void insertTOC(Word._Application oWord, Word._Document oDoc)
         {
+            log("Inserting TOC...");
+
             Object oClassType = "Word.Document.8";
             Object oTrue = true;
             Object oFalse = false;
@@ -307,8 +338,9 @@ namespace WordHelper
 
         }
 
-        private static void updateTOC(Word._Application oWord, Word._Document oDoc)
+        private void updateTOC(Word._Application oWord, Word._Document oDoc)
         {
+            log("Updating TOC...");
             //UPDATING THE TABLE OF CONTENTS  
             oDoc.TablesOfContents[1].Update();
             //UPDATING THE TABLE OF CONTENTS  

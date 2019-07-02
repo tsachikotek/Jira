@@ -12,6 +12,22 @@ namespace JiraHelper
     {
         public Jira jiraConn { get; set; }
 
+        //On Logger Events
+        public event printLogHandler OnLog;
+        public delegate void printLogHandler(string sender, string message);
+
+        public void log(string message)
+        {
+            // Log to the queue.
+            //Log(log);
+            Console.WriteLine(message);
+
+            if (OnLog != null)
+            {
+                OnLog(this.GetType().Name, message);
+            }
+        }
+
         public JiraObject(string jiraUrl, string jiraUsername, string jiraPassword)
         {
             if (jiraUrl == "X")
@@ -42,6 +58,14 @@ namespace JiraHelper
 
             reqGetFilter.Method = Method.GET;
 
+            log("REST: " + reqGetFilter.Resource);
+            foreach (var prm in reqGetFilter.Parameters)
+            {
+                log(prm.Name + ": "+ prm.Value);
+            }
+
+            
+
             var res = jiraRestClient.RestSharpClient.ExecuteAsGet(reqGetFilter, "Get");
 
             //JiraIssues
@@ -50,7 +74,7 @@ namespace JiraHelper
 
             //res.Content
 
-            System.Console.WriteLine("Content: " + res.Content.ToString());
+            log("Content: " + res.Content.ToString());
 
 
             // use LINQ syntax to retrieve issues
@@ -59,11 +83,11 @@ namespace JiraHelper
             //             orderby i.Created
             //             select i;
 
-            System.Console.WriteLine("Issues Found: " + jiraIssues.issues.Count());
+            log("Issues Found: " + jiraIssues.issues.Count());
 
             foreach (var jIssue in jiraIssues.issues)
             {
-                System.Console.WriteLine(jIssue.key + " -- " + jIssue.fields.description);
+                log(jIssue.key + " -- " + jIssue.fields.description);
             }
 
             //System.Console.ReadLine();

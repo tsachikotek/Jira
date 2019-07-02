@@ -54,7 +54,7 @@ namespace JiraAdapter
                 _workingOn = value;
                 if (PropertyChanged != null)
                 {
-                    log("WorkingOn: " + _workingOn);
+                    log(_workingOn);
                     PropertyChanged(this, new PropertyChangedEventArgs("WorkingOn"));
                 }
             }
@@ -84,6 +84,8 @@ namespace JiraAdapter
         private void ExportJiraIssue(JiraIssues issues, string filename)
         {
             wordCreate wordDoc = new wordCreate();
+            wordDoc.OnLog += OnLog;
+
             Action<string> workMethod = (message) => log(message);
 
             try
@@ -117,10 +119,15 @@ namespace JiraAdapter
             }
         }
 
+        private void OnLog(string sender,  string message)
+        {
+            log(string.Format("{0}: {1}", sender, message));
+        }
+
         private void log (string message)
         {
             logger.Dispatcher.BeginInvoke((Action)delegate () {
-                int itemIndex = logger.Items.Add(message);
+                int itemIndex = logger.Items.Add(DateTime.Now.ToString("hh:mm:ss.fff") + '\t' + message);
                 logger.SelectedIndex = itemIndex;
                 logger.ScrollIntoView(logger.SelectedItem);
             });
@@ -139,7 +146,9 @@ namespace JiraAdapter
             btnOpenFile.IsEnabled = false;
 
             WorkingOn = "CONNECTING TO JIRA...";
-            JiraObject jira = new JiraObject(jiraHome, jiraUsername, jiraPassword);            
+            JiraObject jira = new JiraObject(jiraHome, jiraUsername, jiraPassword);
+            jira.OnLog += OnLog;
+
             JiraIssues issues = jira.getJiraIssues(jiraQueryFolter);
             WorkingOn = "RETRIEVED: " + issues.issues.Count + " issues";
 
